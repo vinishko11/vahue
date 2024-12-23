@@ -1,0 +1,42 @@
+-- Партнеры Excel partners_import
+    create table partners(
+    partnerType nchar(10) not null,
+    partnerName nchar(50) primary key not null,
+    partnerDirector nchar(70) not null,
+    partnerMail nchar(100) not null,
+    partnerPhone nchar(13) not null, -- Пример 903 778 48 65 (+7 добавляется в программе)
+    partnerAddress nchar(200) not null, -- Юрид адрес партнера
+    partnerInn nchar(10) not null, -- ИНН партнера (там лучше подойдет bigint, но я решил nchar())
+    partnerRate int not null -- Рейтинг партнера от 0 до 10
+    );
+
+    -- Типы продукции Excel product_type_import
+    create table productType(
+    productTypeName nchar(50) primary key not null,
+    productIndex real not null -- Дробное число
+    );
+
+    -- Продукты Excel products_import
+    create table products(
+    productTypeNameFk nchar(50) not null, -- Вторичный ключ
+    FOREIGN KEY (productTypeNameFk) REFERENCES productType(productTypeName),
+    productName nchar(250) primary key not null,
+    productArticle bigint not null, -- Я не знаю почему это не PK, но в Excel оно негде не используется
+    productMinCost real not null -- Минимальная стоимость для партнера
+    );
+
+    -- История Excel partner_product_import
+    create table history(
+    productNameFk nchar(250) not null,
+    FOREIGN KEY (productNameFk) REFERENCES products (productName),
+    partnerNameFk nchar(50) not null,
+    FOREIGN KEY (partnerNameFk) REFERENCES partners (partnerName),
+    historyProductsCount bigint not null,
+    historySaleDate date not null
+    );
+
+    -- Тип материала Excel material_type_import
+    create table materialType(
+    materialTypeName nchar(30) primary key not null,
+    materialBreakPercent nchar(7) not null -- Процент брака (я не знаю как процент ЗАПИСАТЬ)
+    );
