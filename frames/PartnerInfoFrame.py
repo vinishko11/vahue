@@ -1,0 +1,2 @@
+class PartnerInfoClass:
+    pass

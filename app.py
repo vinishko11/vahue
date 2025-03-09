@@ -1,129 +1,83 @@
-import sys
-from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import QSize
 from PySide6.QtWidgets import (
+    QWidget,
     QStackedWidget,
-    QApplication,
     QVBoxLayout,
-    QWidget)
+    QApplication
+)
 
-from frames import mainWindowFrame
-from db.database import Database
-from partner import Partner
+import sys
 
+from frames import MainFrame
 
-class Application(QWidget):
+from db import database
+
+class MainAppClass(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-        self.setWindowTitle("Мастер пол")
-        self.resize(QSize(800, 800))
-        self.setMaximumSize(QSize(800, 800))
-        self.setObjectName("mainWindowWidget")
-        icon = QIcon()
-        icon.addPixmap(QPixmap("res/icon.ico"))
-        self.setWindowIcon(icon)
 
-        # инициализация базы данных
-        self.database = Database()
-        # инициализация стартового фрейма
-        self.mainWindowFrame = mainWindowFrame.MainWindowFrame(self, self)
-        # создаем контейнер для фреймов
-        self.framesContainer = QStackedWidget()
-        # стартовый фрейм в контейнер
-        self.framesContainer.addWidget(self.mainWindowFrame)
-        # макет для фреймов из контейнера
-        self.framesContainerLayout = QVBoxLayout(self)
-        # добавляем контейнер в планировщик
-        self.framesContainerLayout.addWidget(self.framesContainer)
+        self.setWindowTitle("Мастер Пол")
+        self.resize(800, 600)
 
-    def showCurrentFrame(self, frame, partnername: str = Partner.getName()):
-        currentFrame = frame(self, self)
-        # self.framesContainer.removeWidget(currentFrame)
-        if partnername:
-            Partner.setName(partnername)
+        self.db = database.Database()
 
-        self.framesContainer.addWidget(currentFrame)
-        self.framesContainer.setCurrentWidget(currentFrame)
+        self.frames_container = QStackedWidget()
 
-StyleSheet = '''
-#mainWindowWidget {
-    background: #FFFFFF;
-}
+        main_frame = MainFrame.MainFrameClass(self)
+        self.frames_container.addWidget(main_frame)
 
-#partnerCard {
-    background-color: #F4E8D3;
-}
+        layout = QVBoxLayout(self)
+        layout.addWidget(
+            self.frames_container)
 
-QMessageBox {
-    background: #FFFFFF;
-}
 
-QVBoxLayout {
-    background: #F4E8D3;
-}
-QLabel {
-    color: #000000;
-    font-size: 16px;
-}
 
-/* цвет всех заголовков */
-#title {
-    color: #000000;
-    font-size: 25px;
-    font-weight: bold;
-    qproperty-alignment: AlignCenter;
-}
-
-/* белая подложка в области прокрутки */
-#containerWidgets {
-    background: #FFFFFF;
-}
-
-/* стиль для полей ввода */
-QLineEdit {
-    height: 40px;
-    color: #000000;
-    background: #FFFFFF
-}
-
-/* зеленый цвет и черные буквы для кнопок */
+# #67BA80 - Акцентирование внимания
+# #F4E8D3 - Дополнительный фон
+# #FFFFFF - Основной фон
+# Segoe UI - Шрифт
+styles_sheet = '''
 QPushButton {
-    background: #67BA80;
-    color: #000000;
-    height: 30px;
-    font-size: 18px;
+background: #67BA80;
+color: #000000;
 }
 
-/* бежевый цвет для подложек карточек партнеров */
-#partnerCard, #scroll_widgets_contents{
-    background: #F4E8D3;
+QLineEdit {
+font-size: 15px;
 }
 
-/* стиль для скидки */
-#salePercent {
-    background: #F4E8D3;
-    color: #000000;
-    qproperty-alignment: AlignRight;
+
+#Title {
+font-size: 20px;
+qproperty-alignment: AlignCenter;
 }
 
-/* бежевый цвет для карточек партнеров */
-#Partner_name, #Partner_phone, #partner_information_data, #text_enter_hint{
-    background: #F4E8D3;
-    color: #000000;
-    padding: 0px 0px 0px 10px;
+#Hint_label {
+font-size: 18px;
+padding: 10px, 0px, 0px, 0px;
+font-weight: bold;
 }
+
+#Main_label {
+font-size: 15px;
+}
+
+#Card_label {
+font-size: 15px;
+}
+
+#Card {
+border: 2px solid black;
+}
+
+#Top_lvl_label {
+font-size: 30px;
+}
+
 '''
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    # Установка стилей
-    app.setStyleSheet(StyleSheet)
-
-    # Инициализация приложения
-    mainWindow = Application()
-    mainWindow.setWindowIcon(QIcon("res/icon.ico"))
-
-    # Демонстрация главного окна
-    mainWindow.show()
-    sys.exit(app.exec())
+application = QApplication(sys.argv)
+application.setStyleSheet(styles_sheet)
+application.setFont('Segoe UI')
+main_class_object = MainAppClass()
+main_class_object.show()
+application.exec()
