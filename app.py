@@ -8,8 +8,9 @@ from PySide6.QtWidgets import (
 import sys
 
 from Partner import Partner
-from SendMessages import send_warning_message
 from frames import MainFrame
+
+from SendMessages import send_warning_message
 
 from db import database
 

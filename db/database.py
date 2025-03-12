@@ -155,3 +155,29 @@ class Database():
         except Exception as error:
             print(f'::^ {error}')
             return False
+
+    def take_sales_info(self, partner_name: str):
+        try:
+            query = f'''
+                    SELECT *
+                    FROM history
+                    WHERE partner_name_fk = '{partner_name}';
+                    '''
+            cursor = self.connection_uri.cursor()
+            cursor.execute(query)
+            partners_data = []
+            for data in cursor.fetchall():
+                partners_data.append(
+                    {
+                        'product': data[0].strip(),
+                        'partner': data[1].strip(),
+                        'count': data[2],
+                        'date': data[3],
+                    }
+                )
+
+            cursor.close()
+            return partners_data
+        except Exception as error:
+            print(f':: {error}')
+            return []
