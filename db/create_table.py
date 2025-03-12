@@ -31,12 +31,13 @@ def create_table(connect):
         );
     
         create table history(
-        product_Name_fk nchar(250) not null,
+        product_name_fk nchar(250) not null,
         FOREIGN KEY (product_Name_fk) REFERENCES products (product_name),
         partner_name_fk nchar(50) not null,
         FOREIGN KEY (partner_name_fk) REFERENCES partners (partner_name),
         history_products_count bigint not null,
-        history_sale_date date not null
+        history_sale_date date not null,
+        primary key (product_name_fk, partner_name_fk)
         );
     
         create table material_type(

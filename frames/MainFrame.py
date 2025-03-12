@@ -47,7 +47,7 @@ class MainFrameClass(QFrame):
 
         add_partner_btn = QPushButton("Добавить нового партнера")
         add_partner_btn.clicked.connect(
-            lambda: self.controller.switch_frames(AddPartnerFrame.AddPartnerClass)
+            lambda: self.controller.switch_frame(AddPartnerFrame.AddPartnerClass)
         )
 
         self.main_frame_layout.addWidget(add_partner_btn)
@@ -139,12 +139,11 @@ class MainFrameClass(QFrame):
         # Открытие окна с подробной информацией о партнере
         sender = self.sender()
         partner_name = sender.accessibleName()
-        self.controller.switch_frames(PartnerInfoFrame.PartnerInfoClass, partner_name)
+        self.controller.switch_frame(PartnerInfoFrame.PartnerInfoClass, partner_name)
 
 
     def open_update_info_frame(self):
         # Открытие окна для редактирования информации о партнере
         sender = self.sender()
         partner_name = sender.accessibleName()
-
-        self.controller.switch_frames(UpdatePartnerFrame.UpdatePartnerClass, partner_name)
+        self.controller.switch_frame(UpdatePartnerFrame.UpdatePartnerClass, partner_name)

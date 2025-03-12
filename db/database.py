@@ -1,7 +1,8 @@
 import psycopg2
-from PySide6.scripts.deploy_lib import Config
 
 from db import config
+
+from CheckInputData import start_check
 
 # Класс для работы с базой данных PostgreSQL
 class Database():
@@ -70,3 +71,87 @@ class Database():
         except Exception as error:
             print(error)
             return None
+
+    def take_partner_info(self, partner_name: str):
+        # Получение информации о конкретном партнере из БД
+        try:
+            query = f'''
+            SELECT *
+            FROM partners
+            WHERE partner_name = '{partner_name}';
+            '''
+            cursor = self.connection_uri.cursor()
+            cursor.execute(query)
+            partners_data = dict()
+            for data in cursor.fetchall():
+                partners_data = {
+                    'type': data[0].strip(),
+                    'name': data[1].strip(),
+                    'dir': data[2].strip(),
+                    'mail': data[3].strip(),
+                    'phone': data[4].strip(),
+                    'addr': data[5].strip(),
+                    'inn': data[6].strip(),
+                    'rate': data[7]
+                }
+            cursor.close()
+            return partners_data
+        except Exception as error:
+            print(f':: {error}')
+            return dict()
+
+    def update_partner(self, partner_data: dict, partner_name: str):
+        try:
+            if not start_check(partner_data):
+                return False
+
+            query = f'''
+            UPDATE partners
+            SET 
+            partner_type = '{partner_data['type']}', 
+            partner_name = '{partner_data['name']}', 
+            partner_director = '{partner_data['dir']}', 
+            partner_mail = '{partner_data['mail']}', 
+            partner_phone = '{partner_data['phone']}', 
+            partner_address = '{partner_data['addr']}', 
+            partner_inn = '{partner_data['inn']}', 
+            partner_rate = '{partner_data['rate']}'
+            
+            WHERE partner_name = '{partner_name}';
+            '''
+
+            cursor = self.connection_uri.cursor()
+            cursor.execute(query)
+            self.connection_uri.commit()
+            cursor.close()
+            return True
+        except Exception as error:
+            print(f'::^ {error}')
+            return False
+
+    def add_new_partner(self, partner_data: dict):
+        try:
+            if not start_check(partner_data):
+                return False
+
+            query = f'''
+                INSERT INTO partners
+                VALUES (
+                '{partner_data['type']}', 
+                '{partner_data['name']}', 
+                '{partner_data['dir']}', 
+                '{partner_data['mail']}', 
+                '{partner_data['phone']}', 
+                '{partner_data['addr']}', 
+                '{partner_data['inn']}', 
+                '{partner_data['rate']}');
+                '''
+
+            cursor = self.connection_uri.cursor()
+            cursor.execute(query)
+            self.connection_uri.commit()
+            cursor.close()
+            return True
+        except Exception as error:
+            print(f'::^ {error}')
+            return False
